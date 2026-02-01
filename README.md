@@ -21,15 +21,38 @@ Lark CLI provides a comprehensive set of commands for managing Lark documents, w
 
 ## Installation
 
-### Prerequisites
+### Quick Install (Recommended)
 
-- Rust 1.70 or later
-- Lark application credentials (APP_ID and APP_SECRET)
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/DreamCats/lark-cli/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/DreamCats/lark-cli/main/install.ps1 | iex
+```
+
+### Download Binary
+
+Download the latest release for your platform from [GitHub Releases](https://github.com/DreamCats/lark-cli/releases).
+
+| Platform | Download |
+|----------|----------|
+| macOS (Apple Silicon) | `lark-cli-aarch64-apple-darwin.tar.gz` |
+| macOS (Intel) | `lark-cli-x86_64-apple-darwin.tar.gz` |
+| Linux (x64) | `lark-cli-x86_64-unknown-linux-gnu.tar.gz` |
+| Linux (musl) | `lark-cli-x86_64-unknown-linux-musl.tar.gz` |
+| Windows (x64) | `lark-cli-x86_64-pc-windows-msvc.zip` |
 
 ### Build from Source
 
+Prerequisites: Rust 1.70 or later
+
 ```bash
-git clone <repository-url>
+git clone https://github.com/DreamCats/lark-cli.git
 cd lark-cli
 cargo build --release
 ```
