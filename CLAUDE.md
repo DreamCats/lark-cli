@@ -121,7 +121,11 @@ Some API methods (particularly in `wiki.rs`) use manual HTTP request building in
 - `APP_SECRET`: Lark application secret
 
 ### Environment File Location
-The tool looks for `.env` file in the same directory as the executable, not in the project root. Use `.env.template` as a template for the required format.
+The tool searches for `.env` file in the following order:
+1. Same directory as the executable
+2. User-level directory: `~/.lark-cli/.env`
+
+Use `.env.template` as a template for the required format.
 
 ## API Endpoints Used
 
