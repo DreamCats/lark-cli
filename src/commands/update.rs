@@ -1,4 +1,5 @@
 use crate::error::Result;
+use semver::Version;
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
@@ -33,16 +34,21 @@ struct UpdateResult {
 }
 
 pub async fn update_command(check_only: bool, force: bool) -> Result<()> {
-    let current_version = env!("CARGO_PKG_VERSION");
-    println!("🔍 当前版本: {}", current_version);
+    let current_version_str = env!("CARGO_PKG_VERSION");
+    println!("🔍 当前版本: {}", current_version_str);
 
     // 获取最新版本信息
     let release = get_latest_release().await?;
-    let latest_version = release.tag_name.trim_start_matches('v');
+    let latest_version_str = release.tag_name.trim_start_matches('v');
 
-    println!("🌟 最新版本: {}", latest_version);
+    println!("🌟 最新版本: {}", latest_version_str);
 
-    // 版本比较
+    // 使用语义版本比较
+    let current_version = Version::parse(current_version_str)
+        .map_err(|e| crate::error::LarkError::ParseError(format!("解析当前版本失败: {}", e)))?;
+    let latest_version = Version::parse(latest_version_str)
+        .map_err(|e| crate::error::LarkError::ParseError(format!("解析最新版本失败: {}", e)))?;
+
     if !force && current_version >= latest_version {
         println!("✅ 当前已是最新版本！");
         return Ok(());
@@ -50,7 +56,7 @@ pub async fn update_command(check_only: bool, force: bool) -> Result<()> {
 
     if check_only {
         if current_version < latest_version {
-            println!("💡 有新版本可用，运行 'lark update' 进行更新");
+            println!("💡 有新版本可用，运行 'lark-cli update' 进行更新");
         }
         return Ok(());
     }
@@ -75,7 +81,7 @@ async fn get_latest_release() -> Result<GitHubRelease> {
         .build()
         .map_err(|e| crate::error::LarkError::NetworkError(format!("创建 HTTP 客户端失败: {}", e)))?;
 
-    let url = "https://api.github.com/repos/DreamCats/byted-cli-scripts/releases/latest";
+    let url = "https://api.github.com/repos/DreamCats/lark-cli/releases/latest";
 
     let response = client
         .get(url)
@@ -113,11 +119,11 @@ fn detect_platform() -> String {
     let arch = env::consts::ARCH;
 
     match (os, arch) {
-        ("linux", "x86_64") => "linux-x64".to_string(),
-        ("linux", "aarch64") => "linux-arm64".to_string(),
-        ("macos", "x86_64") => "macos-x64".to_string(),
-        ("macos", "aarch64") => "macos-arm64".to_string(),
-        ("windows", "x86_64") => "windows-x64".to_string(),
+        ("linux", "x86_64") => "x86_64-unknown-linux-gnu".to_string(),
+        ("linux", "aarch64") => "aarch64-unknown-linux-gnu".to_string(),
+        ("macos", "x86_64") => "x86_64-apple-darwin".to_string(),
+        ("macos", "aarch64") => "aarch64-apple-darwin".to_string(),
+        ("windows", "x86_64") => "x86_64-pc-windows-msvc".to_string(),
         _ => format!("{}-{}", os, arch),
     }
 }
@@ -251,12 +257,12 @@ fn extract_zip(data: &[u8], output_path: &Path) -> Result<()> {
 }
 
 async fn verify_checksum(download_path: &Path, release: &GitHubRelease) -> Result<()> {
-    // 查找 SHA256SUMS 文件
+    // 查找 SHA256SUMS.txt 文件
     let checksum_asset = release
         .assets
         .iter()
-        .find(|asset| asset.name == "SHA256SUMS")
-        .ok_or_else(|| crate::error::LarkError::NetworkError("找不到 SHA256SUMS 文件".to_string()))?;
+        .find(|asset| asset.name == "SHA256SUMS.txt")
+        .ok_or_else(|| crate::error::LarkError::NetworkError("找不到 SHA256SUMS.txt 文件".to_string()))?;
 
     let client = reqwest::Client::new();
     let response = client
