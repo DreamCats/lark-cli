@@ -20,8 +20,8 @@ async fn test_auth_manager_new() {
 #[tokio::test]
 async fn test_auth_manager_clone() {
     let config = Config {
-        app_id: "cli_a8d667668b73900b".to_string(),
-        app_secret: "FS9N0KX5IFrAnu38ANGQegJpyWeOvEr7".to_string(),
+        app_id: "".to_string(),
+        app_secret: "".to_string(),
     };
 
     let auth_manager1 = AuthManager::new(config);
