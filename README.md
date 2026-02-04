@@ -64,14 +64,14 @@ The binary will be available at `target/release/lark-cli`.
 Lark CLI loads configuration from `.env` files in the following order of precedence:
 
 1. **Executable Directory** - `{executable_path}/.env`
-2. **User Directory** - `~/.lark-cli/.env`
+2. **User Config Directory** - `~/.config/lark-cli/.env`
 
 ### Setup
 
 ```bash
 # Option 1: User-level configuration (recommended)
-mkdir -p ~/.lark-cli
-cat > ~/.lark-cli/.env << EOF
+mkdir -p ~/.config/lark-cli
+cat > ~/.config/lark-cli/.env << EOF
 APP_ID=your_app_id_here
 APP_SECRET=your_app_secret_here
 EOF
@@ -476,7 +476,7 @@ Lark CLI provides descriptive error messages for common issues:
 
 **Q: Where should I place the `.env` file?**
 
-A: The recommended location is `~/.lark-cli/.env` for global access. Alternatively, place it in the same directory as the executable.
+A: The recommended location is `~/.config/lark-cli/.env` for global access. Alternatively, place it in the same directory as the executable.
 
 **Q: How do I enable debug logging?**
 

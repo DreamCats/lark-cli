@@ -47,13 +47,18 @@ lark-cli [全局选项] <命令> [命令参数]
 
 ## 环境配置
 
-在使用任何命令前，需要配置环境变量：
+在使用任何命令前，需要配置环境变量。工具按以下顺序搜索 `.env` 文件：
 
-1. 创建 `.env` 文件（与可执行文件同目录）
-2. 添加以下内容：
-```
+1. 可执行文件同目录
+2. 用户配置目录：`~/.config/lark-cli/.env`（推荐）
+
+创建配置文件：
+```bash
+mkdir -p ~/.config/lark-cli
+cat > ~/.config/lark-cli/.env << EOF
 APP_ID=your_app_id
 APP_SECRET=your_app_secret
+EOF
 ```
 
 ## 输出格式

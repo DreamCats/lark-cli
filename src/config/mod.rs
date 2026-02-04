@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 use crate::error::{LarkError, Result};
 
-/// 用户级配置目录名称
-const USER_CONFIG_DIR: &str = ".lark-cli";
+/// 用户级配置目录名称（位于 ~/.config/ 下）
+const USER_CONFIG_DIR: &str = "lark-cli";
 /// 环境变量文件名
 const ENV_FILE_NAME: &str = ".env";
 /// 应用 ID 环境变量名
@@ -30,9 +30,9 @@ impl Config {
 
         // Build .env file paths
         let exe_env_path = exe_dir.join(ENV_FILE_NAME);
-        let user_env_path = dirs::home_dir()
-            .map(|home| home.join(USER_CONFIG_DIR).join(ENV_FILE_NAME))
-            .ok_or_else(|| LarkError::ConfigError("Cannot get user home directory".to_string()))?;
+        let user_env_path = dirs::config_dir()
+            .map(|config| config.join(USER_CONFIG_DIR).join(ENV_FILE_NAME))
+            .ok_or_else(|| LarkError::ConfigError("Cannot get user config directory".to_string()))?;
 
         let mut env_loaded = false;
         let mut loaded_path = exe_env_path.clone();
@@ -69,7 +69,7 @@ impl Config {
             return Err(LarkError::ConfigError(format!(
                 "Environment file not found in either location:\n\
                 1. {} (executable directory)\n\
-                2. {} (user directory: ~/{}/{})\n\
+                2. {} (user config directory: ~/.config/{}/{})\n\
                 \n\
                 Please create a .env file in one of these locations with {} and {}",
                 exe_env_path.display(),
